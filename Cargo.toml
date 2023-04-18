@@ -9,3 +9,6 @@ homepage = "https://github.com/nvzqz/condtype"
 documentation = "https://docs.rs/condtype"
 categories = ["no-std", "rust-patterns"]
 keywords = ["condition", "type", "boolean", "true", "false"]
+
+# Const generics ordered before type generics.
+rust-version = "1.59.0"
