@@ -17,3 +17,9 @@ let int: CondType<false, &str, i32> = 42;
 // Unsized types are also supported:
 let str: &CondType<true, str, [u8]> = "world";
 ```
+
+## License
+
+Like the Rust project, this library may be used under either the
+[MIT License](https://github.com/nvzqz/condtype/blob/main/LICENSE-MIT) or
+[Apache License (Version 2.0)](https://github.com/nvzqz/condtype/blob/main/LICENSE-APACHE).
