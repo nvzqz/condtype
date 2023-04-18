@@ -18,6 +18,22 @@ let int: CondType<false, &str, i32> = 42;
 let str: &CondType<true, str, [u8]> = "world";
 ```
 
+## Install
+
+This crate is [available on crates.io](https://crates.io/crates/condtype) and can be
+used by running the following `cargo` command in your project directory:
+
+```sh
+cargo add condtype
+```
+
+or by manually adding the following to your project's [`Cargo.toml`](https://doc.rust-lang.org/cargo/reference/manifest.html):
+
+```toml
+[dependencies]
+condtype = "0.0.0"
+```
+
 ## License
 
 Like the Rust project, this library may be used under either the
