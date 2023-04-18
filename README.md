@@ -40,7 +40,7 @@ or by manually adding the following to your project's [`Cargo.toml`](https://doc
 
 ```toml
 [dependencies]
-condtype = "0.0.0"
+condtype = "1.0.0"
 ```
 
 ## License
