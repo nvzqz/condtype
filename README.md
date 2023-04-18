@@ -1,5 +1,7 @@
 # `condtype`
 
+[![docs.rs](https://img.shields.io/crates/v/condtype.svg?style=flat-square&label=docs&color=blue&logo=rust)](https://docs.rs/condtype) [![crates.io](https://img.shields.io/crates/d/condtype.svg?style=flat-square)](https://crates.io/crates/condtype) [![github](https://img.shields.io/github/stars/nvzqz/condtype.svg?style=flat-square&color=black)][github]
+
 Choose Rust types via boolean conditions, brought to you by
 [Nikolai Vazquez](https://hachyderm.io/@nikolai).
 
