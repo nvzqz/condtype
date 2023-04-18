@@ -3,6 +3,13 @@
 Choose Rust types via boolean conditions, brought to you by
 [Nikolai Vazquez](https://hachyderm.io/@nikolai).
 
+If you find this crate useful, consider
+[starring it][github] as well as
+[sponsoring](https://github.com/sponsors/nvzqz) or
+[donating once](https://paypal.me/nvzqz). 💖
+
+[github]: https://github.com/nvzqz/condtype
+
 ## Examples
 
 This crate enables choosing a type based on a compile-time constant, just like
