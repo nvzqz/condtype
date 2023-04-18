@@ -1,0 +1,11 @@
+[package]
+name = "condtype"
+version = "0.0.0"
+edition = "2021"
+authors = ["Nikolai Vazquez"]
+description = "Choose types via boolean conditions."
+repository = "https://github.com/nvzqz/condtype"
+homepage = "https://github.com/nvzqz/condtype"
+documentation = "https://docs.rs/condtype"
+categories = ["no-std", "rust-patterns"]
+keywords = ["condition", "type", "boolean", "true", "false"]
