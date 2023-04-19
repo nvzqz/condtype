@@ -27,6 +27,18 @@ let int: CondType<false, &str, i32> = 42;
 let str: &CondType<true, str, [u8]> = "world";
 ```
 
+## Limitations
+
+It is currently not possible to use `CondType` with a generic constant, since
+Rust does not yet consider trait implementations based on booleans to be
+exhaustive (see [issue](https://github.com/rust-lang/project-const-generics/issues/26)).
+
+```rust,ignore
+fn generic<const B: bool>() {
+    let x: CondType<B, i32, u8> = ...
+}
+```
+
 ## Install
 
 This crate is [available on crates.io](https://crates.io/crates/condtype) and can be

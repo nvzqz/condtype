@@ -1,17 +1,4 @@
 #![doc = include_str!("../README.md")]
-//!
-//! ## Limitations
-//!
-//! It is currently not possible to use [`CondType`] with a generic constant,
-//! since Rust does not yet consider trait implementations based on booleans to
-//! be exhaustive (see [issue](https://github.com/rust-lang/project-const-generics/issues/26)).
-//!
-//! ```rust,ignore
-//! # use condtype::CondType;
-//! fn generic<const B: bool>() {
-//!     let x: CondType<B, i32, u8> = ...
-//! }
-//! ```
 
 #![no_std]
 #![warn(missing_docs)]
