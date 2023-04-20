@@ -24,6 +24,7 @@
 /// ```
 pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocType>::Type;
 
+/// Public-in-private implementation details for `CondType`.
 mod imp {
     use core::marker::PhantomData;
 
@@ -39,5 +40,57 @@ mod imp {
 
     impl<T: ?Sized, F: ?Sized> AssocType for CondType<true, T, F> {
         type Type = T;
+    }
+}
+
+/// Instantiates a [conditionally-typed](CondType) value.
+#[macro_export]
+macro_rules! condval {
+    ($cond:expr, $t:expr, $f:expr) => {
+        $crate::__private::GetValue::value($crate::__private::CondVal::<$cond, _, _> {
+            f: move || $f,
+            t: move || $t,
+        })
+    };
+}
+
+/// Pseudo-public implementation details for `condval!`.
+#[doc(hidden)]
+pub mod __private {
+    pub trait GetValue {
+        type Value;
+
+        fn value(self) -> Self::Value;
+    }
+
+    pub struct CondVal<const B: bool, T, F> {
+        pub t: T,
+        pub f: F,
+    }
+
+    impl<T, F, TFn, FFn> GetValue for CondVal<true, TFn, FFn>
+    where
+        TFn: FnOnce() -> T,
+        FFn: FnOnce() -> F,
+    {
+        type Value = T;
+
+        #[inline]
+        fn value(self) -> T {
+            (self.t)()
+        }
+    }
+
+    impl<T, F, TFn, FFn> GetValue for CondVal<false, TFn, FFn>
+    where
+        TFn: FnOnce() -> T,
+        FFn: FnOnce() -> F,
+    {
+        type Value = F;
+
+        #[inline]
+        fn value(self) -> F {
+            (self.f)()
+        }
     }
 }
