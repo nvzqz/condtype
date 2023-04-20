@@ -29,7 +29,7 @@ let str: &CondType<true, str, [u8]> = "world";
 
 ## Limitations
 
-It is currently not possible to use `CondType` with a generic constant because
+It is currently not possible to use [`CondType`] with a generic constant because
 [Rust does not yet consider trait implementations based on booleans to be exhaustive](https://github.com/rust-lang/project-const-generics/issues/26).
 Once that issue is resolved, all versions of this crate should _just work_ with
 generic constants.
@@ -61,3 +61,5 @@ condtype = "1.0.0"
 Like the Rust project, this library may be used under either the
 [MIT License](https://github.com/nvzqz/condtype/blob/main/LICENSE-MIT) or
 [Apache License (Version 2.0)](https://github.com/nvzqz/condtype/blob/main/LICENSE-APACHE).
+
+[`CondType`]: https://docs.rs/condtype/latest/condtype/type.CondType.html
