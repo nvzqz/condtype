@@ -1,5 +1,4 @@
 #![doc = include_str!("../README.md")]
-
 #![no_std]
 #![warn(missing_docs)]
 
@@ -22,7 +21,7 @@
 /// # use condtype::CondType;
 /// let str: &CondType<true, str, [u8]> = "world";
 /// ```
-pub type CondType<const B: bool, T, F> = <imp::CondType::<B, T, F> as imp::AssocType>::Type;
+pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocType>::Type;
 
 mod imp {
     use core::marker::PhantomData;
