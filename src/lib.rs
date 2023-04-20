@@ -46,7 +46,7 @@ mod imp {
 /// Instantiates a [conditionally-typed](CondType) value.
 #[macro_export]
 macro_rules! condval {
-    ($cond:expr, $t:expr, $f:expr) => {
+    ($cond:expr, $t:expr, $f:expr $(,)?) => {
         $crate::__private::GetValue::value($crate::__private::CondVal::<$cond, _, _> {
             f: move || $f,
             t: move || $t,
