@@ -173,6 +173,8 @@ mod type_eq {
                 to: ManuallyDrop<To>,
             }
 
+            // SAFETY: `TypeEq` instances can only be constructed if `T` and `U`
+            // are the same type.
             unsafe {
                 ManuallyDrop::into_inner(
                     Transmuter {
