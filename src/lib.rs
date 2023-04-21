@@ -163,9 +163,9 @@ mod imp {
             use core::mem::ManuallyDrop;
 
             #[repr(C)]
-            union Transmuter<From, To> {
+            union Transmuter<From, Into> {
                 from: ManuallyDrop<From>,
-                to: ManuallyDrop<To>,
+                into: ManuallyDrop<Into>,
             }
 
             // SAFETY: `TypeEq` instances can only be constructed if `T` and `U`
@@ -175,7 +175,7 @@ mod imp {
                     Transmuter {
                         from: ManuallyDrop::new(from),
                     }
-                    .to,
+                    .into,
                 )
             }
         }
