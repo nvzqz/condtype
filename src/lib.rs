@@ -131,19 +131,19 @@ pub mod __private {
         Right(TypeEq<R, C>),
     }
 
-    pub trait If<const B: bool, T, E> {
+    pub trait If<const B: bool, T, F> {
         type Chosen;
-        const PROOF: EitherTypeEq<T, E, Self::Chosen>;
+        const PROOF: EitherTypeEq<T, F, Self::Chosen>;
     }
 
-    impl<T, E> If<true, T, E> for () {
+    impl<T, F> If<true, T, F> for () {
         type Chosen = T;
-        const PROOF: EitherTypeEq<T, E, Self::Chosen> = EitherTypeEq::Left(TypeEq::NEW);
+        const PROOF: EitherTypeEq<T, F, Self::Chosen> = EitherTypeEq::Left(TypeEq::NEW);
     }
 
-    impl<T, E> If<false, T, E> for () {
-        type Chosen = E;
-        const PROOF: EitherTypeEq<T, E, Self::Chosen> = EitherTypeEq::Right(TypeEq::NEW);
+    impl<T, F> If<false, T, F> for () {
+        type Chosen = F;
+        const PROOF: EitherTypeEq<T, F, Self::Chosen> = EitherTypeEq::Right(TypeEq::NEW);
     }
 }
 
