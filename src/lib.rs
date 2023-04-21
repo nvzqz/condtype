@@ -95,7 +95,7 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 #[macro_export]
 macro_rules! condval {
     ($cond:expr, $t:expr, $f:expr $(,)?) => {
-        match <() as $crate::__private::If<$cond, _, _>>::PROOF {
+        match <() as $crate::__private::If<{ $cond }, _, _>>::PROOF {
             $crate::__private::EitherTypeEq::Left(te) => te.coerce($t),
             $crate::__private::EitherTypeEq::Right(te) => te.coerce($f),
         }
