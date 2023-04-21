@@ -132,7 +132,11 @@ pub mod __private {
 mod imp {
     use core::{marker::PhantomData, mem::ManuallyDrop};
 
-    pub struct CondType<const B: bool, T: ?Sized, F: ?Sized>(PhantomData<F>, PhantomData<T>);
+    pub struct CondType<const B: bool, T: ?Sized, F: ?Sized>(
+        // `CondType` is covariant over `T` and `F`.
+        PhantomData<F>,
+        PhantomData<T>,
+    );
 
     pub trait AssocType {
         type Type: ?Sized;
@@ -147,7 +151,13 @@ mod imp {
     }
 
     #[allow(clippy::type_complexity)]
-    pub struct TypeEq<T, U>(PhantomData<(fn(T) -> T, fn(U) -> U)>);
+    pub struct TypeEq<T, U>(
+        PhantomData<(
+            // `TypeEq` is invariant over `T` and `U`.
+            fn(T) -> T,
+            fn(U) -> U,
+        )>,
+    );
 
     impl<T> TypeEq<T, T> {
         pub const NEW: Self = TypeEq(PhantomData);
