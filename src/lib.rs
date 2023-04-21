@@ -44,6 +44,45 @@ mod imp {
 }
 
 /// Instantiates a [conditionally-typed](CondType) value.
+///
+/// # Examples
+///
+/// Given a [`const`] [`bool`], the following code will construct either a
+/// [`&str`](str) or [`i32`]:
+///
+/// ```
+/// use condtype::condval;
+///
+/// const COND: bool = // ...
+/// # true;
+///
+/// let str = "hello";
+/// let int = 42;
+///
+/// let val = condval!(COND, str, int);
+/// ```
+///
+/// Assigning an incorrect type will cause a compile failure:
+///
+/// ```compile_fail
+/// # use condtype::*;
+/// let val: bool = condval!(true, "hello", 42);
+/// ```
+///
+/// Attempting to reuse a non-[`Copy`] value from either branch will cause a
+/// compile failure, because it has been moved into that branch and can thus no
+/// longer be used in the outer context:
+///
+/// ```compile_fail
+/// # use condtype::*;
+/// let int = 42;
+/// let vec = vec![1, 2, 3];
+///
+/// let val = condval!(true, int, vec);
+/// println!("{:?}", vec);
+/// ```
+///
+/// [`const`]: https://doc.rust-lang.org/std/keyword.const.html
 #[macro_export]
 macro_rules! condval {
     ($cond:expr, $t:expr, $f:expr $(,)?) => {
