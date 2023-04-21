@@ -147,14 +147,9 @@ mod imp {
     }
 
     #[allow(clippy::type_complexity)]
-    pub struct TypeEq<T: ?Sized, U: ?Sized>(
-        PhantomData<(
-            fn(PhantomData<T>) -> PhantomData<T>,
-            fn(PhantomData<U>) -> PhantomData<U>,
-        )>,
-    );
+    pub struct TypeEq<T, U>(PhantomData<(fn(T) -> T, fn(U) -> U)>);
 
-    impl<T: ?Sized> TypeEq<T, T> {
+    impl<T> TypeEq<T, T> {
         pub const NEW: Self = TypeEq(PhantomData);
     }
 
