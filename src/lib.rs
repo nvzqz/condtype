@@ -24,25 +24,6 @@
 /// ```
 pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocType>::Type;
 
-/// Public-in-private implementation details for `CondType`.
-mod imp {
-    use core::marker::PhantomData;
-
-    pub struct CondType<const B: bool, T: ?Sized, F: ?Sized>(PhantomData<F>, PhantomData<T>);
-
-    pub trait AssocType {
-        type Type: ?Sized;
-    }
-
-    impl<T: ?Sized, F: ?Sized> AssocType for CondType<false, T, F> {
-        type Type = F;
-    }
-
-    impl<T: ?Sized, F: ?Sized> AssocType for CondType<true, T, F> {
-        type Type = T;
-    }
-}
-
 /// Instantiates a [conditionally-typed](CondType) value.
 ///
 /// # Examples
@@ -124,7 +105,7 @@ macro_rules! condval {
 /// Pseudo-public implementation details for `condval!`.
 #[doc(hidden)]
 pub mod __private {
-    use crate::TypeEq;
+    use crate::imp::TypeEq;
 
     pub enum EitherTypeEq<L, R, C> {
         Left(TypeEq<L, C>),
@@ -147,9 +128,23 @@ pub mod __private {
     }
 }
 
-use crate::type_eq::TypeEq;
-mod type_eq {
+/// Public-in-private implementation details.
+mod imp {
     use core::marker::PhantomData;
+
+    pub struct CondType<const B: bool, T: ?Sized, F: ?Sized>(PhantomData<F>, PhantomData<T>);
+
+    pub trait AssocType {
+        type Type: ?Sized;
+    }
+
+    impl<T: ?Sized, F: ?Sized> AssocType for CondType<false, T, F> {
+        type Type = F;
+    }
+
+    impl<T: ?Sized, F: ?Sized> AssocType for CondType<true, T, F> {
+        type Type = T;
+    }
 
     #[allow(clippy::type_complexity)]
     pub struct TypeEq<T: ?Sized, U: ?Sized>(
