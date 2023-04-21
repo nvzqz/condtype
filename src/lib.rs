@@ -62,6 +62,34 @@ mod imp {
 /// let val = condval!(COND, str, int);
 /// ```
 ///
+/// This macro can also construct [`const`] values:
+///
+/// ```
+/// use condtype::{condval, CondType};
+///
+/// const COND: bool = // ...
+/// # true;
+///
+/// const VAL: CondType<COND, &str, i32> = condval!(COND, "hello", 42);
+/// ```
+///
+/// Arguments are lazily evaluated, so there are no effects from unvisited
+/// branches:
+///
+/// ```
+/// # use condtype::*;
+/// let x;
+///
+/// let val = condval!(
+///     true,
+///     { x = 10; "hello" },
+///     { x = 50; 42 },
+/// );
+///
+/// assert_eq!(x, 10);
+/// assert_eq!(val, "hello");
+/// ```
+///
 /// Assigning an incorrect type will cause a compile failure:
 ///
 /// ```compile_fail
@@ -86,50 +114,81 @@ mod imp {
 #[macro_export]
 macro_rules! condval {
     ($cond:expr, $t:expr, $f:expr $(,)?) => {
-        $crate::__private::GetValue::value($crate::__private::CondVal::<$cond, _, _> {
-            f: move || $f,
-            t: move || $t,
-        })
+        match <() as $crate::__private::If<$cond, _, _>>::PROOF {
+            $crate::__private::EitherTypeEq::Left(te) => te.coerce($t),
+            $crate::__private::EitherTypeEq::Right(te) => te.coerce($f),
+        }
     };
 }
 
 /// Pseudo-public implementation details for `condval!`.
 #[doc(hidden)]
 pub mod __private {
-    pub trait GetValue {
-        type Value;
+    use crate::TypeEq;
 
-        fn value(self) -> Self::Value;
+    pub enum EitherTypeEq<L, R, C> {
+        Left(TypeEq<L, C>),
+        Right(TypeEq<R, C>),
     }
 
-    pub struct CondVal<const B: bool, T, F> {
-        pub t: T,
-        pub f: F,
+    pub trait If<const B: bool, T, E> {
+        type Chosen;
+        const PROOF: EitherTypeEq<T, E, Self::Chosen>;
     }
 
-    impl<T, F, TFn, FFn> GetValue for CondVal<true, TFn, FFn>
-    where
-        TFn: FnOnce() -> T,
-        FFn: FnOnce() -> F,
-    {
-        type Value = T;
+    impl<T, E> If<true, T, E> for () {
+        type Chosen = T;
+        const PROOF: EitherTypeEq<T, E, Self::Chosen> = EitherTypeEq::Left(TypeEq::NEW);
+    }
 
-        #[inline]
-        fn value(self) -> T {
-            (self.t)()
+    impl<T, E> If<false, T, E> for () {
+        type Chosen = E;
+        const PROOF: EitherTypeEq<T, E, Self::Chosen> = EitherTypeEq::Right(TypeEq::NEW);
+    }
+}
+
+use crate::type_eq::TypeEq;
+mod type_eq {
+    use core::marker::PhantomData;
+
+    #[allow(clippy::type_complexity)]
+    pub struct TypeEq<T: ?Sized, U: ?Sized>(
+        PhantomData<(
+            fn(PhantomData<T>) -> PhantomData<T>,
+            fn(PhantomData<U>) -> PhantomData<U>,
+        )>,
+    );
+
+    impl<T: ?Sized, U: ?Sized> Copy for TypeEq<T, U> {}
+
+    impl<T: ?Sized, U: ?Sized> Clone for TypeEq<T, U> {
+        fn clone(&self) -> Self {
+            *self
         }
     }
 
-    impl<T, F, TFn, FFn> GetValue for CondVal<false, TFn, FFn>
-    where
-        TFn: FnOnce() -> T,
-        FFn: FnOnce() -> F,
-    {
-        type Value = F;
+    impl<T: ?Sized> TypeEq<T, T> {
+        pub const NEW: Self = TypeEq(PhantomData);
+    }
 
-        #[inline]
-        fn value(self) -> F {
-            (self.f)()
+    impl<T, U> TypeEq<T, U> {
+        pub const fn coerce(self, from: T) -> U {
+            use core::mem::ManuallyDrop;
+
+            #[repr(C)]
+            union Transmuter<From, To> {
+                from: ManuallyDrop<From>,
+                to: ManuallyDrop<To>,
+            }
+
+            unsafe {
+                ManuallyDrop::into_inner(
+                    Transmuter {
+                        from: ManuallyDrop::new(from),
+                    }
+                    .to,
+                )
+            }
         }
     }
 }
