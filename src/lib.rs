@@ -159,14 +159,6 @@ mod type_eq {
         )>,
     );
 
-    impl<T: ?Sized, U: ?Sized> Copy for TypeEq<T, U> {}
-
-    impl<T: ?Sized, U: ?Sized> Clone for TypeEq<T, U> {
-        fn clone(&self) -> Self {
-            *self
-        }
-    }
-
     impl<T: ?Sized> TypeEq<T, T> {
         pub const NEW: Self = TypeEq(PhantomData);
     }
