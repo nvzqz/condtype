@@ -130,7 +130,7 @@ pub mod __private {
 
 /// Public-in-private implementation details.
 mod imp {
-    use core::marker::PhantomData;
+    use core::{marker::PhantomData, mem::ManuallyDrop};
 
     pub struct CondType<const B: bool, T: ?Sized, F: ?Sized>(PhantomData<F>, PhantomData<T>);
 
@@ -160,8 +160,6 @@ mod imp {
 
     impl<T, U> TypeEq<T, U> {
         pub const fn coerce(self, from: T) -> U {
-            use core::mem::ManuallyDrop;
-
             #[repr(C)]
             union Transmuter<From, Into> {
                 from: ManuallyDrop<From>,
