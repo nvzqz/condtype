@@ -27,6 +27,29 @@ let int: CondType<false, &str, i32> = 42;
 let str: &CondType<true, str, [u8]> = "world";
 ```
 
+This crate can be used to change types based on platform-specific constants. In
+the following example, the `RlimOption` type can either be `Option<rlim_t>` or
+`rlim_t` itself, where `rlim_t::MAX` can be considered to be a sentinel value
+for `Option::None`. This enables some platforms to use a smaller-sized type.
+
+```rust
+use condtype::{condval, CondType};
+use libc::{rlim_t, RLIM_INFINITY};
+
+const RLIM_INFINITY_IS_MAX: bool = RLIM_INFINITY == rlim_t::MAX;
+
+type RlimOption = CondType<RLIM_INFINITY_IS_MAX, Option<rlim_t>, rlim_t>;
+
+const RLIM_NONE: RlimOption = condval!(if RLIM_INFINITY_IS_MAX {
+    None::<rlim_t>
+} else {
+    rlim_t::MAX
+});
+
+// Convert from either `RlimOption` type to `Option` via the `Into` trait:
+let rlim_none: Option<rlim_t> = RLIM_NONE.into();
+```
+
 ## Limitations
 
 It is currently not possible to use [`CondType`] with a generic constant because
