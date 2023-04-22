@@ -26,14 +26,30 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 
 /// Instantiates a [conditionally-typed](CondType) value.
 ///
-/// # Examples
+/// Attempting to return different types from [`if`]/[`else`] is not normally
+/// possible since both branches must produce the same type:
 ///
-/// Given [`const`] [`bool`s](bool), the following code will construct either a
-/// [`&str`](str), [`i32`], or [`Vec`]:
+/// ```compile_fail
+/// let val = if true { "hello" } else { 42 };
+/// ```
+///
+/// This macro enables returning different types by making the type be
+/// conditional on a [`const`] [`bool`]:
 ///
 /// ```
 /// use condtype::condval;
 ///
+/// let val: &str = condval!(if true { "hello" } else { 42 });
+/// let val: i32 = condval!(if false { "hello" } else { 42 });
+/// ```
+///
+/// # Examples
+///
+/// Given two conditions, the following code will construct either a
+/// [`&str`](str), [`i32`], or [`Vec`]:
+///
+/// ```
+/// # use condtype::condval;
 /// const COND1: bool = // ...
 /// # true;
 /// const COND2: bool = // ...
@@ -116,6 +132,8 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// ```
 ///
 /// [`const`]: https://doc.rust-lang.org/std/keyword.const.html
+/// [`else`]:  https://doc.rust-lang.org/std/keyword.else.html
+/// [`if`]:    https://doc.rust-lang.org/std/keyword.if.html
 #[macro_export]
 macro_rules! condval {
     (if $cond:block $t:block else $f:block) => {
