@@ -136,25 +136,25 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// [`if`]:    https://doc.rust-lang.org/std/keyword.if.html
 #[macro_export]
 macro_rules! condval {
-    (if $cond:block $t:block else $f:block) => {
+    (if $cond:block   $t:block else $f:block) => {
         match <() as $crate::__private::If<$cond, _, _>>::PROOF {
             $crate::__private::EitherTypeEq::Left(te) => te.coerce($t),
             $crate::__private::EitherTypeEq::Right(te) => te.coerce($f),
         }
     };
-    (if $cond:block $t:block else $($else:tt)+) => {
+    (if $cond:block   $t:block else $($else:tt)+) => {
         $crate::condval!(if $cond $t else { $crate::condval!($($else)+) })
     };
     (if $cond:literal $t:block else $($else:tt)+) => {
         $crate::condval!(if { $cond } $t else $($else)+)
     };
-    (if $cond:ident $t:block else $($else:tt)+) => {
+    (if $cond:ident   $t:block else $($else:tt)+) => {
         $crate::condval!(if { $cond } $t else $($else)+)
     };
-    (if $cond:path $t:block else $($else:tt)+) => {
+    (if $cond:path    $t:block else $($else:tt)+) => {
         $crate::condval!(if { $cond } $t else $($else)+)
     };
-    (if ($cond:expr) $t:block else $($else:tt)+) => {
+    (if ($cond:expr)  $t:block else $($else:tt)+) => {
         $crate::condval!(if { $cond } $t else $($else)+)
     };
 }
