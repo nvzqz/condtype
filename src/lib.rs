@@ -1,6 +1,6 @@
 //! [`CondType`]: CondType
 #![doc = include_str!("../README.md")]
-#![no_std]
+#![cfg_attr(not(doc), no_std)]
 #![warn(missing_docs)]
 
 /// A type alias determined by a boolean condition.
@@ -29,7 +29,7 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// # Examples
 ///
 /// Given [`const`] [`bool`s](bool), the following code will construct either a
-/// [`&str`](str), [`i32`], or [array]:
+/// [`&str`](str), [`i32`], or [`Vec`]:
 ///
 /// ```
 /// use condtype::condval;
@@ -41,14 +41,14 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 ///
 /// let str = "hello";
 /// let int = 42;
-/// let arr = [1, 2, 3];
+/// let vec = vec![1, 2, 3];
 ///
 /// let val = condval!(if COND1 {
 ///     str
 /// } else if COND2 {
 ///     int
 /// } else {
-///     arr
+///     vec
 /// });
 /// ```
 ///
