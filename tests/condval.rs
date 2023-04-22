@@ -32,19 +32,36 @@ fn condval_path() {
 
 #[test]
 fn condval_not_true() {
-    let x = condval!(if { !true } { "a" } else { 1 });
+    let x = condval!(if !true { "a" } else { 1 });
     assert_eq!(x, 1);
 }
 
 #[test]
 fn condval_and() {
-    let x = condval!(if { true && false } { "a" } else { 1 });
+    let x = condval!(if true && false { "a" } else { 1 });
     assert_eq!(x, 1);
 }
 
 #[test]
 fn condval_paren() {
+    #[allow(unused_parens)]
     let x = condval!(if (true && false) { "a" } else { 1 });
+    assert_eq!(x, 1);
+}
+
+#[test]
+fn condval_struct_method() {
+    struct Foo {}
+
+    impl Foo {
+        const fn foo(self) -> bool {
+            false
+        }
+    }
+
+    // Although this expression isn't allowed in normal `if`, we opt to parse
+    // any condition expressions.
+    let x = condval!(if Foo {}.foo() { "a" } else { 1 });
     assert_eq!(x, 1);
 }
 
