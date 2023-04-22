@@ -28,22 +28,27 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 ///
 /// # Examples
 ///
-/// Given a [`const`] [`bool`], the following code will construct either a
-/// [`&str`](str) or [`i32`]:
+/// Given [`const`] [`bool`s](bool), the following code will construct either a
+/// [`&str`](str), [`i32`], or [array]:
 ///
 /// ```
 /// use condtype::condval;
 ///
-/// const COND: bool = // ...
+/// const COND1: bool = // ...
+/// # true;
+/// const COND2: bool = // ...
 /// # true;
 ///
 /// let str = "hello";
 /// let int = 42;
+/// let arr = [1, 2, 3];
 ///
-/// let val = condval!(if COND {
+/// let val = condval!(if COND1 {
 ///     str
-/// } else {
+/// } else if COND2 {
 ///     int
+/// } else {
+///     arr
 /// });
 /// ```
 ///
@@ -119,17 +124,20 @@ macro_rules! condval {
             $crate::__private::EitherTypeEq::Right(te) => te.coerce($f),
         }
     };
-    (if $cond:literal $t:block else $f:block) => {
-        $crate::condval!(if { $cond } $t else $f)
+    (if $cond:block $t:block else $($else:tt)+) => {
+        $crate::condval!(if $cond $t else { $crate::condval!($($else)+) })
     };
-    (if $cond:ident $t:block else $f:block) => {
-        $crate::condval!(if { $cond } $t else $f)
+    (if $cond:literal $t:block else $($else:tt)+) => {
+        $crate::condval!(if { $cond } $t else $($else)+)
     };
-    (if $cond:path $t:block else $f:block) => {
-        $crate::condval!(if { $cond } $t else $f)
+    (if $cond:ident $t:block else $($else:tt)+) => {
+        $crate::condval!(if { $cond } $t else $($else)+)
     };
-    (if ($cond:expr) $t:block else $f:block) => {
-        $crate::condval!(if { $cond } $t else $f)
+    (if $cond:path $t:block else $($else:tt)+) => {
+        $crate::condval!(if { $cond } $t else $($else)+)
+    };
+    (if ($cond:expr) $t:block else $($else:tt)+) => {
+        $crate::condval!(if { $cond } $t else $($else)+)
     };
 }
 
