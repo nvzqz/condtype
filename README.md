@@ -54,14 +54,19 @@ See [`CondType`] and [`condval!`] documentation for more info.
 
 ## Limitations
 
-It is currently not possible to use [`CondType`] with a generic constant because
-[Rust does not yet consider trait implementations based on booleans to be exhaustive](https://github.com/rust-lang/project-const-generics/issues/26).
+It is currently not possible to use [`CondType`] or [`condval!`] with a generic
+constant because [Rust does not yet consider trait implementations based on
+booleans to be exhaustive](https://github.com/rust-lang/project-const-generics/issues/26).
 Once that issue is resolved, all versions of this crate should _just work_ with
 generic constants.
 
 ```rust,ignore
 fn generic<const B: bool>() {
-    let x: CondType<B, i32, u8> = ...
+    let val: CondType<B, &str, i32> = condval!(if B {
+        "hello"
+    } else {
+        42
+    });
 }
 ```
 
