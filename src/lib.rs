@@ -40,7 +40,11 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// let str = "hello";
 /// let int = 42;
 ///
-/// let val = condval!(COND, str, int);
+/// let val = condval!(if COND {
+///     str
+/// } else {
+///     int
+/// });
 /// ```
 ///
 /// This macro can also construct [`const`] values:
@@ -51,7 +55,11 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// const COND: bool = // ...
 /// # true;
 ///
-/// const VAL: CondType<COND, &str, i32> = condval!(COND, "hello", 42);
+/// const VAL: CondType<COND, &str, i32> = condval!(if COND {
+///     "hello"
+/// } else {
+///     42
+/// });
 /// ```
 ///
 /// Arguments are lazily evaluated, so there are no effects from unvisited
@@ -61,11 +69,13 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// # use condtype::*;
 /// let x;
 ///
-/// let val = condval!(
-///     true,
-///     { x = 10; "hello" },
-///     { x = 50; 42 },
-/// );
+/// let val = condval!(if true {
+///     x = 10;
+///     "hello"
+/// } else {
+///     x = 50;
+///     42
+/// });
 ///
 /// assert_eq!(x, 10);
 /// assert_eq!(val, "hello");
@@ -75,7 +85,11 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 ///
 /// ```compile_fail
 /// # use condtype::*;
-/// let val: bool = condval!(true, "hello", 42);
+/// let val: bool = condval!(if true {
+///     "hello"
+/// } else {
+///     42
+/// });
 /// ```
 ///
 /// Attempting to reuse a non-[`Copy`] value from either branch will cause a
@@ -87,18 +101,32 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// let int = 42;
 /// let vec = vec![1, 2, 3];
 ///
-/// let val = condval!(true, int, vec);
+/// let val = condval!(if true {
+///     int
+/// } else {
+///     vec
+/// });
+///
 /// println!("{:?}", vec);
 /// ```
 ///
 /// [`const`]: https://doc.rust-lang.org/std/keyword.const.html
 #[macro_export]
 macro_rules! condval {
-    ($cond:expr, $t:expr, $f:expr $(,)?) => {
-        match <() as $crate::__private::If<{ $cond }, _, _>>::PROOF {
+    (if $cond:block $t:block else $f:block) => {
+        match <() as $crate::__private::If<$cond, _, _>>::PROOF {
             $crate::__private::EitherTypeEq::Left(te) => te.coerce($t),
             $crate::__private::EitherTypeEq::Right(te) => te.coerce($f),
         }
+    };
+    (if $cond:ident $t:block else $f:block) => {
+        $crate::condval!(if { $cond } $t else $f)
+    };
+    (if $cond:path $t:block else $f:block) => {
+        $crate::condval!(if { $cond } $t else $f)
+    };
+    (if ($cond:expr) $t:block else $f:block) => {
+        $crate::condval!(if { $cond } $t else $f)
     };
 }
 
