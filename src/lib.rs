@@ -119,6 +119,9 @@ macro_rules! condval {
             $crate::__private::EitherTypeEq::Right(te) => te.coerce($f),
         }
     };
+    (if $cond:literal $t:block else $f:block) => {
+        $crate::condval!(if { $cond } $t else $f)
+    };
     (if $cond:ident $t:block else $f:block) => {
         $crate::condval!(if { $cond } $t else $f)
     };
