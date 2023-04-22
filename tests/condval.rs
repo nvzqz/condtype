@@ -66,6 +66,15 @@ fn condval_struct_method() {
 }
 
 #[test]
+fn condval_hygiene() {
+    // "te" is used by the `match` in `condval!`.
+    let te = 1;
+
+    let x = condval!(if false { "a" } else { te });
+    assert_eq!(x, 1);
+}
+
+#[test]
 fn condval_else_if1() {
     let x = condval!(if true {
         "a"
