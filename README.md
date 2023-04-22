@@ -50,6 +50,8 @@ const RLIM_NONE: RlimOption = condval!(if RLIM_INFINITY_IS_MAX {
 let rlim_none: Option<rlim_t> = RLIM_NONE.into();
 ```
 
+See [`CondType`] and [`condval!`] documentation for more info.
+
 ## Limitations
 
 It is currently not possible to use [`CondType`] with a generic constant because
@@ -86,3 +88,4 @@ Like the Rust project, this library may be used under either the
 [Apache License (Version 2.0)](https://github.com/nvzqz/condtype/blob/main/LICENSE-APACHE).
 
 [`CondType`]: https://docs.rs/condtype/latest/condtype/type.CondType.html
+[`condval!`]: https://docs.rs/condtype/latest/condtype/macro.condval.html

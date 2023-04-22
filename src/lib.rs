@@ -1,4 +1,5 @@
 //! [`CondType`]: CondType
+//! [`condval!`]: condval
 #![doc = include_str!("../README.md")]
 #![cfg_attr(not(doc), no_std)]
 #![warn(missing_docs)]
