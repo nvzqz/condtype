@@ -47,6 +47,15 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// let val: i32 = condval!(if false { "hello" } else { 42 });
 /// ```
 ///
+/// # Performance
+///
+/// This macro uses a pattern called ["TT munching"](https://veykril.github.io/tlborm/decl-macros/patterns/tt-muncher.html)
+/// to parse the [`if`] condition expression. Compile times for TT munchers are
+/// quadratic relative to the input length, so an expression like `!!!!!!!COND`
+/// will compile slightly slower than `!COND` because it recurses 6 more times.
+/// This can be mitigated by moving all logic in the [`if`] condition to a
+/// separate [`const`].
+///
 /// # Examples
 ///
 /// Given two conditions, the following code will construct either a
