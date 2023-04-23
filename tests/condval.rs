@@ -77,6 +77,26 @@ fn condval_hygiene() {
 }
 
 #[test]
+fn condval_empty() {
+    let _: () = condval!(if true {
+    } else {
+        1
+    });
+
+    let _: () = condval!(if false {
+        "a"
+    } else {
+    });
+
+    let _: () = condval!(if false {
+        "a"
+    } else if false {
+        1
+    } else {
+    });
+}
+
+#[test]
 fn condval_else_if1() {
     let x = condval!(if true {
         "a"
