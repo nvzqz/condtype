@@ -1,5 +1,8 @@
 //! [`CondType`]: CondType
 //! [`condval!`]: condval
+//! [`bool`]: bool
+//! [`i32`]: i32
+//! [`&str`]: str
 #![doc = include_str!("../README.md")]
 #![cfg_attr(not(doc), no_std)]
 #![warn(missing_docs)]
@@ -25,7 +28,7 @@
 /// ```
 pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocType>::Type;
 
-/// Instantiates a [conditionally-typed](CondType) value.
+/// Instantiates a [conditionally-typed](crate#conditional-typing) value.
 ///
 /// Attempting to return different types from [`if`]/[`else`] is not normally
 /// possible since both branches must produce the same type:

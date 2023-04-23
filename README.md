@@ -12,10 +12,18 @@ If you find this crate useful, consider
 
 [github]: https://github.com/nvzqz/condtype
 
+## Conditional Typing
+
+The [`CondType`] type and [`condval!`] macro choose types using compile-time
+constants, just like [`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
+Unlike [`Either`], the chosen type is directly used, rather than wrapping it
+with an [`enum`] type. This may be considered a form of [dependent typing](https://en.wikipedia.org/wiki/Dependent_type),
+but it is limited in ability and is restricted to compile-time constants rather
+than runtime values.
+
 ## Examples
 
-This crate enables choosing a type based on a compile-time constant, just like
-[`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
+In the following example, [`CondType`] aliases [`&str`] or [`i32`]:
 
 ```rust
 use condtype::CondType;
@@ -27,10 +35,27 @@ let int: CondType<false, &str, i32> = 42;
 let str: &CondType<true, str, [u8]> = "world";
 ```
 
-This crate can be used to change types based on platform-specific constants. In
-the following example, the `RlimOption` type can either be `Option<rlim_t>` or
-`rlim_t` itself, where `rlim_t::MAX` can be considered to be a sentinel value
-for `Option::None`. This enables some platforms to use a smaller-sized type.
+[`condval!`] enables choosing differently-typed values without specifying types.
+In the following example, `val` is inferred to be either [`&str`] or [`i32`],
+depending on `COND`.
+
+```rust
+use condtype::condval;
+
+const COND: bool = true;
+
+let val = condval!(if COND {
+    "hello"
+} else {
+    42
+});
+```
+
+This crate also enables making code for some platforms more efficient by using
+smaller-sized types depending on platform-specific constants. In the following
+example, the `RlimOption` type can either be `Option<rlim_t>` or `rlim_t`
+itself, where `rlim_t::MAX` can be treated as a sentinel value for
+`Option::None`.
 
 ```rust
 use condtype::{condval, CondType};
@@ -49,8 +74,6 @@ const RLIM_NONE: RlimOption = condval!(if RLIM_INFINITY_IS_MAX {
 // Convert from either `RlimOption` type to `Option` via the `Into` trait:
 let rlim_none: Option<rlim_t> = RLIM_NONE.into();
 ```
-
-See [`CondType`] and [`condval!`] documentation for more info.
 
 ## Limitations
 
@@ -94,3 +117,10 @@ Like the Rust project, this library may be used under either the
 
 [`CondType`]: https://docs.rs/condtype/latest/condtype/type.CondType.html
 [`condval!`]: https://docs.rs/condtype/latest/condtype/macro.condval.html
+[`Either`]:   https://docs.rs/either/latest/either/enum.Either.html
+
+[`const`]: https://doc.rust-lang.org/std/keyword.const.html
+[`enum`]:  https://doc.rust-lang.org/std/keyword.enum.html
+[`bool`]:  https://doc.rust-lang.org/std/primitive.bool.html
+[`i32`]:   https://doc.rust-lang.org/std/primitive.i32.html
+[`&str`]:  https://doc.rust-lang.org/std/primitive.str.html
