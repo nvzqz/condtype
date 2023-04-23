@@ -75,6 +75,31 @@ const RLIM_NONE: RlimOption = condval!(if RLIM_INFINITY_IS_MAX {
 let rlim_none: Option<rlim_t> = RLIM_NONE.into();
 ```
 
+Without this crate, one could otherwise use [`cfg_if!`] to achieve the same
+goal. However, using [`#[cfg]`][cfg] requires maintaining a list of platforms
+and being more fine-grained if `RLIM_INFINITY` is dependent on CPU architecture.
+
+```rust
+use cfg_if::cfg_if;
+use libc::rlim_t;
+
+cfg_if! {
+    // Platforms where `RLIM_INFINITY != rlim_t::MAX`:
+    if #[cfg(any(
+        target_os = "macos",
+        target_os = "freebsd",
+        target_os = "solaris",
+        // ad nauseam...
+    ))] {
+        type RlimOption = rlim_t;
+        const RLIM_NONE: RlimOption = rlim_t::MAX;
+    } else {
+        type RlimOption = Option<rlim_t>;
+        const RLIM_NONE: RlimOption = None;
+    }
+}
+```
+
 ## Limitations
 
 It is currently not possible to use [`CondType`] or [`condval!`] with a generic
@@ -118,9 +143,11 @@ Like the Rust project, this library may be used under either the
 [`CondType`]: https://docs.rs/condtype/latest/condtype/type.CondType.html
 [`condval!`]: https://docs.rs/condtype/latest/condtype/macro.condval.html
 [`Either`]:   https://docs.rs/either/latest/either/enum.Either.html
+[`cfg_if!`]:  https://docs.rs/cfg-if/latest/cfg_if/macro.cfg_if.html
 
 [`const`]: https://doc.rust-lang.org/std/keyword.const.html
 [`enum`]:  https://doc.rust-lang.org/std/keyword.enum.html
 [`bool`]:  https://doc.rust-lang.org/std/primitive.bool.html
 [`i32`]:   https://doc.rust-lang.org/std/primitive.i32.html
 [`&str`]:  https://doc.rust-lang.org/std/primitive.str.html
+[cfg]:     https://doc.rust-lang.org/rust-by-example/attribute/cfg.html

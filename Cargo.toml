@@ -17,3 +17,4 @@ rust-version = "1.59.0"
 
 [dev-dependencies]
 libc = "0.2.141"
+cfg-if = "1"
