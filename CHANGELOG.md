@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ### Added
 
+## [1.1.0] - 2023-04-25
+
 - [`condval!`](https://docs.rs/condtype/latest/condtype/macro.condval.html)
   macro to construct [conditionally-typed](CondType) values.
 
@@ -25,6 +27,7 @@ The format is based on [Keep a Changelog] and this project adheres to
 [Keep a Changelog]:    http://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
 
-[Unreleased]: https://github.com/nvzqz/condtype/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/nvzqz/condtype/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/nvzqz/condtype/compare/v1.0.0...v1.1.0
 
 [CondType]: https://docs.rs/condtype/latest/condtype/type.CondType.html
