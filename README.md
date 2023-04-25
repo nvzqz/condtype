@@ -2,7 +2,7 @@
 
 [![docs.rs](https://img.shields.io/crates/v/condtype.svg?style=flat-square&label=docs&color=blue&logo=rust)](https://docs.rs/condtype) [![crates.io](https://img.shields.io/crates/d/condtype.svg?style=flat-square)](https://crates.io/crates/condtype) [![github](https://img.shields.io/github/stars/nvzqz/condtype.svg?style=flat-square&color=black)][github]
 
-Choose Rust types via boolean conditions, brought to you by
+Choose Rust types at compile-time via boolean constants, brought to you by
 [Nikolai Vazquez](https://hachyderm.io/@nikolai).
 
 If you find this crate useful, consider
@@ -14,8 +14,8 @@ If you find this crate useful, consider
 
 ## Conditional Typing
 
-The [`CondType`] type and [`condval!`] macro choose types using compile-time
-constants, just like [`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
+The [`CondType`] type and [`condval!`] macro choose types at compile-time using
+[`bool`] constants, just like [`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
 Unlike [`Either`], the chosen type is directly used, rather than wrapping it
 with an [`enum`] type. This may be considered a form of [dependent typing](https://en.wikipedia.org/wiki/Dependent_type),
 but it is limited in ability and is restricted to compile-time constants rather
