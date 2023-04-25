@@ -7,11 +7,21 @@
 #![cfg_attr(not(doc), no_std)]
 #![warn(missing_docs)]
 
-/// A type alias determined by a boolean condition.
+/// [Conditionally aliases a type](crate#conditional-typing) using a [`bool`]
+/// constant.
 ///
-/// This is equivalent to [`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
+/// This is the Rust equivalent of [`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
+/// Unlike [`Either`], the chosen type is aliased, rather than wrapped with an
+/// [`enum`] type. This may be considered a form of [dependent typing](https://en.wikipedia.org/wiki/Dependent_type),
+/// but it is limited in ability and is restricted to compile-time constants
+/// rather than runtime values.
+///
+/// [`enum`]: https://doc.rust-lang.org/std/keyword.enum.html
+/// [`Either`]: https://docs.rs/either/latest/either/enum.Either.html
 ///
 /// # Examples
+///
+/// In the following example, `CondType` aliases [`&str`](str) or [`i32`]:
 ///
 /// ```
 /// use condtype::CondType;
@@ -20,11 +30,28 @@
 /// let int: CondType<false, &str, i32> = 42;
 /// ```
 ///
-/// This can also be used with <code>\![Sized]</code> types:
+/// This can also alias <code>\![Sized]</code> types:
 ///
 /// ```
 /// # use condtype::CondType;
-/// let str: &CondType<true, str, [u8]> = "world";
+/// type T = CondType<true, str, [u8]>;
+///
+/// let val: &T = "world";
+/// ```
+///
+/// Rather than assign a value by knowing the condition, this can be used with
+/// [`condval!`] to choose a value based on the same condition:
+///
+/// ```
+/// # use condtype::*;
+/// const COND: bool = // ...
+/// # true;
+///
+/// let val: CondType<COND, &str, i32> = condval!(if COND {
+///     "hello"
+/// } else {
+///     42
+/// });
 /// ```
 pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocType>::Type;
 
