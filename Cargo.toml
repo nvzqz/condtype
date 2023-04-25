@@ -9,7 +9,7 @@ repository = "https://github.com/nvzqz/condtype"
 homepage = "https://github.com/nvzqz/condtype"
 documentation = "https://docs.rs/condtype"
 categories = ["no-std", "rust-patterns"]
-keywords = ["condition", "type", "boolean", "true", "false"]
+keywords = ["boolean", "condition", "const", "depend", "type"]
 readme = "README.md"
 
 # Const generics ordered before type generics.
