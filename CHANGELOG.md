@@ -12,13 +12,13 @@ The format is based on [Keep a Changelog] and this project adheres to
 ## [1.1.0] - 2023-04-25
 
 - [`condval!`](https://docs.rs/condtype/latest/condtype/macro.condval.html)
-  macro to construct [conditionally-typed](CondType) values.
+  macro to construct [conditionally-typed][CondType] values.
 
 ## 1.0.0 - 2023-04-18
 
 ### Added
 
-- [`CondType`](CondType) type alias that is determined by a boolean condition,
+- [`CondType`][CondType] type alias that is determined by a boolean condition,
   just like [`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
 
 [crate]:       https://crates.io/crates/condtype
