@@ -5,7 +5,7 @@
 Choose Rust types at compile-time via boolean constants, brought to you by
 [Nikolai Vazquez](https://hachyderm.io/@nikolai).
 
-If you find this crate useful, consider
+If you find this library useful, consider
 [starring it][github] as well as
 [sponsoring](https://github.com/sponsors/nvzqz) or
 [donating once](https://paypal.me/nvzqz). 💖
@@ -16,14 +16,16 @@ If you find this crate useful, consider
 
 The [`CondType`] type and [`condval!`] macro choose types at compile-time using
 [`bool`] constants, just like [`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
-Unlike [`Either`], the chosen type is directly used, rather than wrapping it
-with an [`enum`] type. This may be considered a form of [dependent typing](https://en.wikipedia.org/wiki/Dependent_type),
-but it is limited in ability and is restricted to compile-time constants rather
-than runtime values.
+Unlike the [`Either`] type, the type chosen by [`CondType`]/[`condval!`] is
+directly used, rather than wrapped with an [`enum`] type. This may be considered
+a form of [dependent typing](https://en.wikipedia.org/wiki/Dependent_type), but
+it is limited in ability and is restricted to compile-time constants rather than
+runtime values.
 
 ## Examples
 
-In the following example, [`CondType`] aliases [`&str`] or [`i32`]:
+In the following example, [`CondType`] aliases either [`&str`] or [`i32`],
+depending on the boolean [generic constant][const-generics]:
 
 ```rust
 use condtype::CondType;
@@ -49,13 +51,19 @@ let val = condval!(if COND {
 } else {
     42
 });
+
+assert_eq!(val, "hello");
 ```
 
-This crate also enables making code for some platforms more efficient by using
-smaller-sized types depending on platform-specific constants. In the following
-example, the `RlimOption` type can either be `Option<rlim_t>` or `rlim_t`
-itself, where `rlim_t::MAX` can be treated as a sentinel value for
-`Option::None`.
+### Platform-Specific Types
+
+This library can make code for some platforms more efficient by using
+smaller-sized types, depending on platform-specific constants.
+
+In the following example, the `RlimOption` type can be either
+<code>[Option]\<[rlim_t][resource.h]></code> or [`rlim_t`][resource.h] itself,
+where [`rlim_t::MAX`] can be treated as a sentinel value for
+[`Option::None`][None] if it is not equal to [`RLIM_INFINITY`][resource.h].
 
 ```rust
 use condtype::{condval, CondType};
@@ -75,9 +83,10 @@ const RLIM_NONE: RlimOption = condval!(if RLIM_INFINITY_IS_MAX {
 let rlim_none: Option<rlim_t> = RLIM_NONE.into();
 ```
 
-Without this crate, one could otherwise use [`cfg_if!`] to achieve the same
+Without this library, one could otherwise use [`cfg_if!`] to achieve the same
 goal. However, using [`#[cfg]`][cfg] requires maintaining a list of platforms
-and being more fine-grained if `RLIM_INFINITY` is dependent on CPU architecture.
+and being more fine-grained if [`RLIM_INFINITY`][resource.h] is dependent on CPU
+architecture.
 
 ```rust
 use cfg_if::cfg_if;
@@ -102,11 +111,11 @@ cfg_if! {
 
 ## Limitations
 
-It is currently not possible to use [`CondType`] or [`condval!`] with a generic
-constant because [Rust does not yet consider trait implementations based on
-booleans to be exhaustive](https://github.com/rust-lang/project-const-generics/issues/26).
-Once that issue is resolved, all versions of this crate should _just work_ with
-generic constants.
+It is currently not possible to use [`CondType`] or [`condval!`] with a
+[generic constant][const-generics] because [Rust does not yet consider trait
+implementations based on booleans to be exhaustive](https://github.com/rust-lang/project-const-generics/issues/26).
+Once that issue is resolved, all versions of this library should _just work_
+with generic constants.
 
 ```rust,ignore
 fn generic<const B: bool>() {
@@ -120,8 +129,8 @@ fn generic<const B: bool>() {
 
 ## Install
 
-This crate is [available on crates.io](https://crates.io/crates/condtype) and can be
-used by running the following `cargo` command in your project directory:
+This library is [available on crates.io](https://crates.io/crates/condtype) and
+can be used by running the following `cargo` command in your project directory:
 
 ```sh
 cargo add condtype
@@ -150,4 +159,12 @@ Like the Rust project, this library may be used under either the
 [`bool`]:  https://doc.rust-lang.org/std/primitive.bool.html
 [`i32`]:   https://doc.rust-lang.org/std/primitive.i32.html
 [`&str`]:  https://doc.rust-lang.org/std/primitive.str.html
+[Option]:  https://doc.rust-lang.org/std/option/enum.Option.html
+[None]:    https://doc.rust-lang.org/std/option/enum.Option.html#variant.None
 [cfg]:     https://doc.rust-lang.org/rust-by-example/attribute/cfg.html
+
+[`rlim_t::MAX`]: https://doc.rust-lang.org/std/primitive.u64.html#associatedconstant.MAX
+
+[const-generics]: https://doc.rust-lang.org/reference/items/generics.html#const-generics
+
+[resource.h]: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/sys_resource.h.html

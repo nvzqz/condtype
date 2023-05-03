@@ -3,6 +3,9 @@
 //! [`bool`]: bool
 //! [`i32`]: i32
 //! [`&str`]: str
+//! [`rlim_t::MAX`]: u64::MAX
+//! [Option]: Option
+//! [None]: None
 #![doc = include_str!("../README.md")]
 #![cfg_attr(not(doc), no_std)]
 #![warn(missing_docs)]
@@ -11,8 +14,8 @@
 /// constant.
 ///
 /// This is the Rust equivalent of [`std::conditional_t` in C++](https://en.cppreference.com/w/cpp/types/conditional).
-/// Unlike [`Either`], the chosen type is aliased, rather than wrapped with an
-/// [`enum`] type. This may be considered a form of [dependent typing](https://en.wikipedia.org/wiki/Dependent_type),
+/// Unlike the [`Either`] type, the type chosen by `CondType` is aliased, rather
+/// than wrapped with an [`enum`] type. This may be considered a form of [dependent typing](https://en.wikipedia.org/wiki/Dependent_type),
 /// but it is limited in ability and is restricted to compile-time constants
 /// rather than runtime values.
 ///
@@ -80,8 +83,10 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// to parse the [`if`] condition expression. Compile times for TT munchers are
 /// quadratic relative to the input length, so an expression like `!!!!!!!COND`
 /// will compile slightly slower than `!COND` because it recurses 6 more times.
-/// This can be mitigated by moving all logic in the [`if`] condition to a
-/// separate [`const`].
+///
+/// This can be mitigated by:
+/// - Moving all logic in the [`if`] condition to a separate [`const`].
+/// - Wrapping the logic in a block, e.g. `{ !true && !false }`.
 ///
 /// # Examples
 ///
@@ -108,7 +113,7 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// });
 /// ```
 ///
-/// This macro can also construct [`const`] values:
+/// This macro can also be used with [`CondType`] to construct [`const`] values:
 ///
 /// ```
 /// use condtype::{condval, CondType};
@@ -123,7 +128,7 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// });
 /// ```
 ///
-/// Arguments are lazily evaluated, so there are no effects from unvisited
+/// Each branch is lazily evaluated, so there are no effects from unvisited
 /// branches:
 ///
 /// ```
@@ -140,6 +145,20 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 ///
 /// assert_eq!(x, 10);
 /// assert_eq!(val, "hello");
+/// ```
+///
+/// Branch conditions can be any [`bool`] expression. However, see
+/// [performance advice](#performance).
+///
+/// ```
+/// # use condtype::*;
+/// let val = condval!(if !true && !false {
+///     "hello"
+/// } else {
+///     42
+/// });
+///
+/// assert_eq!(val, 42);
 /// ```
 ///
 /// Assigning an incorrect type will cause a compile failure:
