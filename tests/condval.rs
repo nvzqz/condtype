@@ -147,3 +147,41 @@ fn condval_else_if4() {
     });
     assert_eq!(x, [1, 2, 3]);
 }
+
+#[test]
+fn condval_let1() {
+    const VAL: Option<&str> = Some("a");
+
+    let x = condval!(if let Some(val) = VAL { val } else { 1 });
+    assert_eq!(x, "a");
+}
+
+#[test]
+fn condval_let2() {
+    const VAL1: Option<i32> = None;
+    const VAL2: Option<&str> = Some("a");
+
+    let x = condval!(if let Some(val1) = VAL1 {
+        val1
+    } else if let Some(val2) = VAL2 {
+        val2
+    } else {
+        42.0
+    });
+    assert_eq!(x, "a");
+}
+
+#[test]
+fn condval_let3() {
+    const VAL1: Option<i32> = None;
+    const VAL2: Option<&str> = None;
+
+    let x = condval!(if let Some(val1) = VAL1 {
+        val1
+    } else if let Some(val2) = VAL2 {
+        val2
+    } else {
+        42.0
+    });
+    assert_eq!(x, 42.0);
+}

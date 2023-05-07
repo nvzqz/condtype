@@ -9,10 +9,13 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ### Added
 
+- `if let` pattern matching in [`condval!`].
+
 ## [1.1.0] - 2023-04-25
 
-- [`condval!`](https://docs.rs/condtype/latest/condtype/macro.condval.html)
-  macro to construct [conditionally-typed][CondType] values.
+### Added
+
+- [`condval!`] macro to construct [conditionally-typed][CondType] values.
 
 ## 1.0.0 - 2023-04-18
 
@@ -30,4 +33,5 @@ The format is based on [Keep a Changelog] and this project adheres to
 [Unreleased]: https://github.com/nvzqz/condtype/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/nvzqz/condtype/compare/v1.0.0...v1.1.0
 
-[CondType]: https://docs.rs/condtype/latest/condtype/type.CondType.html
+[CondType]:   https://docs.rs/condtype/latest/condtype/type.CondType.html
+[`condval!`]: https://docs.rs/condtype/latest/condtype/macro.condval.html

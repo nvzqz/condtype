@@ -113,7 +113,21 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// });
 /// ```
 ///
-/// This macro can also be used with [`CondType`] to construct [`const`] values:
+/// `if let` pattern matching is also supported:
+///
+/// ```
+/// # use condtype::*;
+/// const STR: Option<&str> = // ...
+/// # None;
+///
+/// let val = condval!(if let Some(str) = STR {
+///     str.to_uppercase()
+/// } else {
+///     42
+/// });
+/// ```
+///
+/// This macro can be used with [`CondType`] to construct [`const`] values:
 ///
 /// ```
 /// use condtype::{condval, CondType};
@@ -195,6 +209,22 @@ pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocTy
 /// [`if`]:    https://doc.rust-lang.org/std/keyword.if.html
 #[macro_export]
 macro_rules! condval {
+    (if let $pat:pat = $input:block $then:block else $else:block) => {
+        $crate::condval!(if {
+            #[allow(unused_variables)]
+            { ::core::matches!($input, $pat) }
+        } {
+            if let $pat = $input $then else {
+                ::core::unreachable!()
+            }
+        } else $else)
+    };
+    (if let $pat:pat = $input:block $then:block else $($else:tt)+) => {
+        $crate::condval!(if let $pat = $input $then else { $crate::condval!($($else)+) })
+    };
+    (if let $pat:pat = $($rest:tt)*) => {
+        $crate::__condval_let_parser!($pat, [] $($rest)*)
+    };
     (if $cond:block $then:block else $else:block) => {
         match <() as $crate::__private::If<$cond, _, _>>::PROOF {
             $crate::__private::EitherTypeEq::Left(te) => te.coerce($then),
@@ -218,6 +248,18 @@ macro_rules! __condval_parser {
     };
     ([$($cond:tt)*] $next:tt $($rest:tt)*) => {
         $crate::__condval_parser!([$($cond)* $next] $($rest)*)
+    };
+}
+
+/// Helps `condval!` parse any `if let` input expression by accumulating tokens.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __condval_let_parser {
+    ($pat:pat, [$($input:tt)+] $then:block else $($else:tt)+) => {
+        $crate::condval!(if let $pat = { $($input)+ } $then else $($else)+)
+    };
+    ($pat:pat, [$($input:tt)*] $next:tt $($rest:tt)*) => {
+        $crate::__condval_let_parser!($pat, [$($input)* $next] $($rest)*)
     };
 }
 
