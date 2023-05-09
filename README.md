@@ -22,7 +22,7 @@ a form of [dependent typing](https://en.wikipedia.org/wiki/Dependent_type), but
 it is limited in ability and is restricted to compile-time constants rather than
 runtime values.
 
-## Examples
+## `CondType`
 
 In the following example, [`CondType`] aliases either [`&str`] or [`i32`],
 depending on the boolean [generic constant][const-generics]:
@@ -36,6 +36,8 @@ let int: CondType<false, &str, i32> = 42;
 // Unsized types are also supported:
 let str: &CondType<true, str, [u8]> = "world";
 ```
+
+## `condval!`
 
 [`condval!`] enables choosing differently-typed values without specifying types.
 In the following example, `val` is inferred to be either [`&str`] or [`i32`],
