@@ -55,6 +55,22 @@ let val = condval!(if COND {
 assert_eq!(val, "hello");
 ```
 
+`if let` pattern matching is also supported:
+
+```rust
+use condtype::condval;
+
+const STR: Option<&str> = Some("hello");
+
+let val = condval!(if let Some(str) = STR {
+    str.to_uppercase()
+} else {
+    42
+});
+
+assert_eq!(val, "HELLO");
+```
+
 ### Platform-Specific Types
 
 This library can make code for some platforms more efficient by using
