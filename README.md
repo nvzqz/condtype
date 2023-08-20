@@ -158,7 +158,7 @@ or by manually adding the following to your project's [`Cargo.toml`](https://doc
 
 ```toml
 [dependencies]
-condtype = "1.2.0"
+condtype = "1.3.0"
 ```
 
 ## License
