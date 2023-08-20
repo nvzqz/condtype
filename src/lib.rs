@@ -10,6 +10,8 @@
 #![cfg_attr(not(doc), no_std)]
 #![warn(missing_docs)]
 
+pub mod num;
+
 /// [Conditionally aliases a type](crate#conditional-typing) using a [`bool`]
 /// constant.
 ///

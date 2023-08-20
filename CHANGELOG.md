@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog] and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `num` module containing conditional aliases to numeric types.
+
 ## [1.2.0] - 2023-05-09
 
 ### Added
