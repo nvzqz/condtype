@@ -58,7 +58,7 @@ pub mod num;
 ///     42
 /// });
 /// ```
-pub type CondType<const B: bool, T, F> = <imp::CondType<B, T, F> as imp::AssocType>::Type;
+pub type CondType<const B: bool, T, F> = <imp::CondType<T, F> as imp::AssocType<B>>::Type;
 
 /// Instantiates a [conditionally-typed](crate#conditional-typing) value.
 ///
@@ -295,21 +295,21 @@ pub mod __private {
 mod imp {
     use core::{marker::PhantomData, mem::ManuallyDrop};
 
-    pub struct CondType<const B: bool, T: ?Sized, F: ?Sized>(
+    pub struct CondType<T: ?Sized, F: ?Sized>(
         // `CondType` is covariant over `T` and `F`.
         PhantomData<F>,
         PhantomData<T>,
     );
 
-    pub trait AssocType {
+    pub trait AssocType<const B: bool> {
         type Type: ?Sized;
     }
 
-    impl<T: ?Sized, F: ?Sized> AssocType for CondType<false, T, F> {
+    impl<T: ?Sized, F: ?Sized> AssocType<false> for CondType<T, F> {
         type Type = F;
     }
 
-    impl<T: ?Sized, F: ?Sized> AssocType for CondType<true, T, F> {
+    impl<T: ?Sized, F: ?Sized> AssocType<true> for CondType<T, F> {
         type Type = T;
     }
 
